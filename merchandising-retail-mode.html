@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Les bases du merchandising – Retail mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1d1b2f; --cream:#fff7ef; --coral:#ff5a5f; --peach:#ffb48f;
+    --mint:#3ddc97; --sky:#4cc9f0; --violet:#7b5cff; --sun:#ffd23f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#2b2840;font-family:'Poppins',system-ui,sans-serif;color:var(--ink);overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+
+  /* Phone frame */
+  .device{position:relative;width:100vw;height:100dvh;background:var(--cream);overflow:hidden}
+  @media (min-width:600px){
+    .device{width:400px;height:min(820px,94vh);border-radius:38px;box-shadow:0 0 0 10px #111,0 30px 80px rgba(0,0,0,.5)}
+  }
+
+  /* Top bar */
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:20;padding:14px 18px 0;display:flex;gap:5px}
+  .topbar span{flex:1;height:4px;border-radius:4px;background:rgba(29,27,47,.15);overflow:hidden}
+  .topbar span i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s}
+  .topbar span.done i{width:100%}
+
+  /* Slides */
+  .slides{position:absolute;inset:0}
+  .slide{position:absolute;inset:0;padding:44px 22px 90px;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transform:translateX(40px);transition:opacity .45s,transform .45s}
+  .slide.active{opacity:1;pointer-events:auto;transform:none}
+  .slide.prev{transform:translateX(-40px)}
+
+  /* Entrance animations (Genially style) */
+  .anim{opacity:0}
+  .slide.active .anim{animation:var(--a,pop) .6s cubic-bezier(.2,1.4,.4,1) forwards;animation-delay:var(--d,0s)}
+  @keyframes pop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}
+  @keyframes up{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:none}}
+  @keyframes left{0%{opacity:0;transform:translateX(-40px)}100%{opacity:1;transform:none}}
+  @keyframes spin{0%{opacity:0;transform:rotate(-90deg) scale(.3)}100%{opacity:1;transform:none}}
+
+  /* Decorative blobs */
+  .blob{position:absolute;border-radius:50%;z-index:-1;filter:blur(.5px)}
+  .slide>*{position:relative;z-index:1}
+  .deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+
+  h1{font-size:2.3rem;line-height:1.05;font-weight:800}
+  h2{font-size:1.55rem;line-height:1.15;font-weight:800;margin-bottom:6px}
+  .kicker{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--ink);color:#fff;padding:5px 11px;border-radius:30px;margin-bottom:12px;align-self:flex-start}
+  p.lead{font-size:.92rem;line-height:1.45;opacity:.85;margin-bottom:14px}
+  .hint{font-size:.75rem;opacity:.6;text-align:center;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:6px}
+  .hint b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--coral);color:#fff;font-size:.8rem}
+
+  /* Cover */
+  .cover{background:var(--coral);color:#fff}
+  .cover h1{font-size:2.7rem;margin-top:auto}
+  .cover h1 em{font-style:normal;color:var(--sun)}
+  .cover .sub{font-size:1rem;margin:14px 0 26px;opacity:.95}
+  .btn{border:none;font:inherit;font-weight:800;font-size:1rem;cursor:pointer;padding:15px 24px;border-radius:50px;
+    background:var(--ink);color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .15s}
+  .btn:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+  .hanger{width:150px;align-self:center;margin-top:40px}
+
+  /* Pulse hotspot */
+  .hot{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--coral);color:#fff;border:3px solid #fff;
+    display:grid;place-items:center;font-weight:800;font-size:1.1rem;cursor:pointer;z-index:5;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+  .hot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--coral);animation:pulse 1.6s infinite}
+  .hot.seen{background:var(--mint)} .hot.seen::after{border-color:var(--mint)}
+  @keyframes pulse{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.7);opacity:0}}
+
+  /* 5B cards */
+  .grid5{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .card{perspective:600px;height:96px;cursor:pointer}
+  .card:last-child{grid-column:span 2}
+  .card .in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+  .card.flip .in{transform:rotateY(180deg)}
+  .card .f,.card .b{position:absolute;inset:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .card .f{font-weight:800;font-size:1rem;color:#fff}
+  .card .f small{font-size:1.6rem;line-height:1}
+  .card .b{transform:rotateY(180deg);background:#fff;border:3px solid var(--ink);font-size:.78rem;line-height:1.3}
+
+  /* Store plan */
+  .plan{position:relative;width:100%;aspect-ratio:1/1.05;margin-top:4px}
+  .plan svg{width:100%;height:100%}
+
+  /* Popup */
+  .pop{position:absolute;inset:0;z-index:50;background:rgba(29,27,47,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+  .pop.open{opacity:1;pointer-events:auto}
+  .pop .sheet{width:100%;background:#fff;border-radius:28px 28px 0 0;padding:26px 22px 30px;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,1.2,.4,1)}
+  .pop.open .sheet{transform:none}
+  .pop .ico{font-size:2.2rem}
+  .pop h3{font-size:1.25rem;font-weight:800;margin:6px 0}
+  .pop p{font-size:.9rem;line-height:1.5;opacity:.85}
+  .pop .close{margin-top:18px;width:100%}
+
+  /* Tabs rules */
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+  .tabs button{flex:none;border:2px solid var(--ink);background:#fff;font:inherit;font-weight:600;font-size:.78rem;padding:7px 12px;border-radius:30px;cursor:pointer}
+  .tabs button.on{background:var(--ink);color:#fff}
+  .panel{display:none;background:#fff;border-radius:22px;padding:16px;box-shadow:0 8px 0 rgba(29,27,47,.08);flex:1;flex-direction:column}
+  .panel.on{display:flex;animation:up .45s ease}
+  .panel h4{font-size:1.05rem;font-weight:800;margin-bottom:6px}
+  .panel p{font-size:.85rem;line-height:1.45;opacity:.85}
+  .visual{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-top:12px;min-height:130px}
+  .tee{width:38px;height:46px;clip-path:polygon(25% 0,40% 8%,60% 8%,75% 0,100% 18%,88% 36%,78% 30%,78% 100%,22% 100%,22% 30%,12% 36%,0 18%);}
+  .size{display:flex;flex-direction:column;align-items:center;font-size:.7rem;font-weight:800;gap:3px}
+
+  /* Shelf */
+  .shelf{position:relative;flex:1;display:flex;gap:12px;margin-top:6px}
+  .ruler{display:flex;flex-direction:column;width:44px;font-size:.65rem;font-weight:600;text-align:right;opacity:.6}
+  .ruler div{flex:1;border-top:1px dashed var(--ink);padding-top:2px}
+  .zones{flex:1;display:flex;flex-direction:column;gap:6px}
+  .zone{flex:1;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:pointer;color:#fff;font-weight:800;font-size:.95rem;transition:transform .2s}
+  .zone:active{transform:scale(.97)}
+  .zone .stars{font-size:.8rem;letter-spacing:2px}
+
+  /* Window */
+  .timer{width:150px;height:150px;border-radius:50%;margin:8px auto 14px;display:grid;place-items:center;position:relative;cursor:pointer}
+  .timer svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .timer .n{font-size:3rem;font-weight:800}
+  .timer .n small{font-size:1rem}
+  .chips{display:flex;flex-direction:column;gap:8px}
+  .chip{display:flex;gap:10px;align-items:center;background:#fff;border-radius:16px;padding:10px 12px;font-size:.82rem;line-height:1.35;box-shadow:0 4px 0 rgba(29,27,47,.07)}
+  .chip b{font-size:1.4rem}
+
+  /* Quiz */
+  .q{display:none;flex-direction:column;gap:9px}
+  .q.on{display:flex;animation:up .4s ease}
+  .q .qt{font-weight:800;font-size:1.05rem;line-height:1.3;margin-bottom:4px}
+  .opt{border:2px solid var(--ink);background:#fff;border-radius:16px;padding:13px 14px;text-align:left;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s,transform .2s}
+  .opt.ok{background:var(--mint);border-color:var(--mint);color:#fff;animation:pop .4s}
+  .opt.ko{background:var(--coral);border-color:var(--coral);color:#fff;animation:shake .4s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .fb{font-size:.82rem;line-height:1.4;background:var(--ink);color:#fff;border-radius:14px;padding:11px 13px;display:none}
+  .fb.on{display:block;animation:up .35s}
+  .qnext{align-self:flex-end;display:none}
+  .qnext.on{display:inline-block}
+  .score{text-align:center;display:none;flex-direction:column;align-items:center;gap:10px;margin-top:20px}
+  .score.on{display:flex;animation:pop .6s}
+  .score .big{font-size:4rem;font-weight:800;line-height:1}
+
+  /* End */
+  .end{background:var(--violet);color:#fff}
+  .recap{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+  .recap div{background:rgba(255,255,255,.14);border-radius:14px;padding:10px 13px;font-size:.86rem;display:flex;gap:10px;align-items:center}
+  .confetti{position:absolute;width:10px;height:14px;top:-20px;z-index:60;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+  /* Nav */
+  .nav{position:absolute;bottom:18px;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:0 18px}
+  .nav button{width:50px;height:50px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .nav button:disabled{opacity:.2}
+  .nav .count{font-weight:800;font-size:.85rem;background:#fff;padding:6px 14px;border-radius:30px;box-shadow:0 3px 0 rgba(29,27,47,.1)}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <div class="topbar" id="bar"></div>
+
+  <div class="slides" id="slides">
+
+    <!-- 1. COVER -->
+    <section class="slide cover active">
+      <div class="deco">
+        <div class="blob" style="width:260px;height:260px;background:var(--peach);top:-80px;right:-90px"></div>
+        <div class="blob" style="width:140px;height:140px;background:var(--sun);bottom:120px;left:-50px"></div>
+      </div>
+      <svg class="hanger anim" style="--a:spin;--d:.1s" viewBox="0 0 200 130" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100 44c0-12 10-18 18-18s16 6 16 15c0 10-8 13-15 17-8 4-19 8-19 18"/>
+        <path d="M100 76 12 116h176z"/>
+      </svg>
+      <span class="kicker anim" style="--a:left;--d:.3s;background:#fff;color:var(--coral)">Micro-learning · 3 min</span>
+      <h1 class="anim" style="--a:up;--d:.45s">Les bases du <em>merchan&shy;dising</em> en retail mode</h1>
+      <p class="sub anim" style="--a:up;--d:.6s">Transformer ton magasin en machine à donner envie 👕✨</p>
+      <button class="btn anim" style="--a:pop;--d:.8s" onclick="go(1)">C'est parti →</button>
+    </section>
+
+    <!-- 2. LES 5B -->
+    <section class="slide">
+      <div class="deco"><div class="blob" style="width:200px;height:200px;background:var(--sun);opacity:.5;top:-60px;right:-70px"></div></div>
+      <span class="kicker anim">01 · Définition</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Le merchandising, c'est la règle des 5B</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Présenter <b>le bon produit</b> de façon à déclencher l'achat. Touche chaque carte pour la retourner.</p>
+      <div class="grid5">
+        <div class="card anim" style="--d:.3s"><div class="in"><div class="f" style="background:var(--coral)"><small>👗</small>Bon produit</div><div class="b">L'assortiment adapté à ta cible et à la saison.</div></div></div>
+        <div class="card anim" style="--d:.4s"><div class="in"><div class="f" style="background:var(--violet)"><small>📍</small>Bon endroit</div><div class="b">Au bon emplacement dans le parcours client.</div></div></div>
+        <div class="card anim" style="--d:.5s"><div class="in"><div class="f" style="background:var(--sky)"><small>⏰</small>Bon moment</div><div class="b">Soldes, rentrée, fêtes : on suit le calendrier commercial.</div></div></div>
+        <div class="card anim" style="--d:.6s"><div class="in"><div class="f" style="background:var(--mint)"><small>📦</small>Bonne quantité</div><div class="b">Ni rayon vide, ni rayon saturé : toutes les tailles dispo.</div></div></div>
+        <div class="card anim" style="--d:.7s"><div class="in"><div class="f" style="background:var(--ink)"><small>🏷️</small>Bon prix</div><div class="b">Prix visible, lisible et cohérent avec la valeur perçue.</div></div></div>
+      </div>
+      <div class="hint"><b>↻</b> 5 cartes à retourner</div>
+    </section>
+
+    <!-- 3. PARCOURS CLIENT -->
+    <section class="slide">
+      <span class="kicker anim">02 · Le parcours client</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Lis ton magasin comme une carte</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Explore les 4 zones clés en touchant les <b style="color:var(--coral)">+</b></p>
+      <div class="plan anim" style="--d:.3s">
+        <svg viewBox="0 0 300 315">
+          <rect x="6" y="6" width="288" height="290" rx="20" fill="#fff" stroke="#1d1b2f" stroke-width="4"/>
+          <defs>
+            <radialGradient id="hotg"><stop offset="0" stop-color="#ff5a5f" stop-opacity=".55"/><stop offset="1" stop-color="#ff5a5f" stop-opacity="0"/></radialGradient>
+            <radialGradient id="coldg"><stop offset="0" stop-color="#4cc9f0" stop-opacity=".5"/><stop offset="1" stop-color="#4cc9f0" stop-opacity="0"/></radialGradient>
+            <marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#7b5cff"/></marker>
+          </defs>
+          <circle cx="220" cy="210" r="90" fill="url(#hotg)"/>
+          <circle cx="80" cy="70" r="80" fill="url(#coldg)"/>
+          <rect x="30" y="30" width="60" height="22" rx="6" fill="#ffd23f"/>
+          <rect x="120" y="30" width="80" height="22" rx="6" fill="#ffd23f"/>
+          <rect x="250" y="40" width="22" height="90" rx="6" fill="#ffd23f"/>
+          <rect x="28" y="120" width="22" height="100" rx="6" fill="#ffd23f"/>
+          <rect x="110" y="120" width="70" height="40" rx="10" fill="#ffb48f"/>
+          <rect x="160" y="240" width="70" height="26" rx="6" fill="#1d1b2f"/>
+          <text x="195" y="257" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" font-family="Poppins">CAISSE</text>
+          <path d="M110 300 C230 290 255 220 235 160 S 200 80 150 85 S 70 120 85 230" fill="none" stroke="#7b5cff" stroke-width="4" stroke-dasharray="8 7" marker-end="url(#ar)"/>
+          <rect x="95" y="290" width="70" height="14" fill="#fff"/>
+          <text x="130" y="312" font-size="11" font-weight="700" text-anchor="middle" font-family="Poppins" fill="#1d1b2f">ENTRÉE</text>
+        </svg>
+        <div class="hot" style="left:38%;top:80%" data-pop="deco">+</div>
+        <div class="hot" style="left:72%;top:58%" data-pop="chaude">+</div>
+        <div class="hot" style="left:20%;top:16%" data-pop="froide">+</div>
+        <div class="hot" style="left:44%;top:41%" data-pop="table">+</div>
+      </div>
+      <div class="hint"><b>4</b> zones à découvrir</div>
+    </section>
+
+    <!-- 4. REGLES DE PRESENTATION -->
+    <section class="slide">
+      <span class="kicker anim">03 · Les règles d'or</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Organiser un rayon</h2>
+      <div class="tabs anim" style="--a:left;--d:.2s" id="tabs">
+        <button class="on" data-t="0">🎨 Couleurs</button>
+        <button data-t="1">📏 Tailles</button>
+        <button data-t="2">🔺 Règle de 3</button>
+        <button data-t="3">👔 Face/profil</button>
+      </div>
+      <div class="panel on anim" style="--a:up;--d:.3s">
+        <h4>Du clair vers le foncé</h4>
+        <p>On range les couleurs de gauche à droite, du plus clair au plus foncé (ou en <b>color blocking</b> par famille). L'œil lit le rayon comme un dégradé harmonieux.</p>
+        <div class="visual">
+          <div class="tee" style="background:#fff3d6;outline:1px solid #ddd"></div>
+          <div class="tee" style="background:#ffd23f"></div>
+          <div class="tee" style="background:#ffb48f"></div>
+          <div class="tee" style="background:#ff5a5f"></div>
+          <div class="tee" style="background:#7b5cff"></div>
+          <div class="tee" style="background:#1d1b2f"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Du plus petit au plus grand</h4>
+        <p>Sur un portant : de gauche à droite, XS → XL. Sur une étagère : du haut vers le bas. Le client trouve sa taille en 2 secondes, sans fouiller.</p>
+        <div class="visual">
+          <div class="size"><div class="tee" style="background:var(--sky);transform:scale(.7)"></div>XS</div>
+          <div class="size"><div class="tee" style="background:var(--sky);transform:scale(.8)"></div>S</div>
+          <div class="size"><div class="tee" style="background:var(--sky);transform:scale(.9)"></div>M</div>
+          <div class="size"><div class="tee" style="background:var(--sky)"></div>L</div>
+          <div class="size"><div class="tee" style="background:var(--sky);transform:scale(1.1)"></div>XL</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>La règle des 3 (pyramide)</h4>
+        <p>Les éléments groupés par 3, en triangle (un point haut, deux bas), créent un équilibre naturel. Idéal pour une table ou une mise en scène de silhouette.</p>
+        <div class="visual">
+          <svg viewBox="0 0 200 120" width="200"><polygon points="100,10 30,110 170,110" fill="none" stroke="#1d1b2f" stroke-width="2" stroke-dasharray="5 5"/>
+            <circle cx="100" cy="22" r="16" fill="#ff5a5f"/><circle cx="42" cy="98" r="16" fill="#7b5cff"/><circle cx="158" cy="98" r="16" fill="#3ddc97"/></svg>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Facing vs hanging</h4>
+        <p><b>De face</b> : 1 pièce phare en tête de portant pour montrer le modèle (et une tenue complète !). <b>De profil</b> : le stock derrière, pour la profondeur de tailles. Résultat : on inspire <i>et</i> on vend.</p>
+        <div class="visual">
+          <svg viewBox="0 0 220 110" width="220">
+            <line x1="10" y1="12" x2="210" y2="12" stroke="#1d1b2f" stroke-width="4" stroke-linecap="round"/>
+            <path d="M40 12v10" stroke="#1d1b2f" stroke-width="3"/>
+            <polygon points="20,24 60,24 70,40 62,46 58,40 58,100 22,100 22,40 18,46 10,40" fill="#ff5a5f"/>
+            <g fill="#7b5cff"><rect x="95" y="20" width="9" height="80" rx="3"/><rect x="110" y="20" width="9" height="80" rx="3"/><rect x="125" y="20" width="9" height="80" rx="3"/><rect x="140" y="20" width="9" height="80" rx="3"/><rect x="155" y="20" width="9" height="80" rx="3"/><rect x="170" y="20" width="9" height="80" rx="3"/></g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HAUTEURS -->
+    <section class="slide">
+      <span class="kicker anim">04 · Les niveaux de présentation</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Toutes les hauteurs ne se valent pas</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Touche chaque niveau pour savoir quoi y mettre.</p>
+      <div class="shelf anim" style="--a:up;--d:.3s">
+        <div class="ruler"><div>2 m</div><div>1,70 m</div><div>1,10 m</div><div>0,60 m</div></div>
+        <div class="zones">
+          <div class="zone" style="background:var(--sky)" data-pop="z1"><span>Chapeau</span><span class="stars">★★</span></div>
+          <div class="zone" style="background:var(--coral);flex:1.3" data-pop="z2"><span>Yeux 👀</span><span class="stars">★★★★</span></div>
+          <div class="zone" style="background:var(--violet)" data-pop="z3"><span>Mains</span><span class="stars">★★★</span></div>
+          <div class="zone" style="background:var(--ink)" data-pop="z4"><span>Pieds</span><span class="stars">★</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. VITRINE -->
+    <section class="slide">
+      <div class="deco"><div class="blob" style="width:220px;height:220px;background:var(--mint);opacity:.35;bottom:60px;right:-90px"></div></div>
+      <span class="kicker anim">05 · La vitrine</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Tu as 3 secondes pour arrêter un passant</h2>
+      <div class="timer anim" style="--a:spin;--d:.25s" id="timer">
+        <svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="66" fill="#fff" stroke="#eee" stroke-width="12"/>
+          <circle id="arc" cx="75" cy="75" r="66" fill="none" stroke="#ff5a5f" stroke-width="12" stroke-linecap="round" stroke-dasharray="415" stroke-dashoffset="0"/></svg>
+        <div class="n" id="tn">3<small>s</small></div>
+      </div>
+      <div class="chips">
+        <div class="chip anim" style="--a:left;--d:.4s"><b>🎬</b><span><b>Un thème, une histoire</b> : un message clair, pas un catalogue.</span></div>
+        <div class="chip anim" style="--a:left;--d:.5s"><b>💡</b><span><b>Lumière + point focal</b> : un mannequin héros, à hauteur des yeux.</span></div>
+        <div class="chip anim" style="--a:left;--d:.6s"><b>🔁</b><span><b>On renouvelle</b> toutes les 2 à 4 semaines pour garder l'effet surprise.</span></div>
+      </div>
+      <div class="hint" style="margin-top:12px"><b>▶</b> Touche le chrono</div>
+    </section>
+
+    <!-- 7. QUIZ -->
+    <section class="slide">
+      <span class="kicker anim">06 · Quiz express</span>
+      <h2 class="anim" style="--a:up;--d:.1s">À toi de jouer !</h2>
+      <div id="quiz" class="anim" style="--a:up;--d:.2s;margin-top:8px"></div>
+    </section>
+
+    <!-- 8. END -->
+    <section class="slide end">
+      <div class="deco">
+        <div class="blob" style="width:240px;height:240px;background:var(--coral);opacity:.6;top:-70px;left:-80px"></div>
+        <div class="blob" style="width:160px;height:160px;background:var(--sun);opacity:.7;bottom:70px;right:-60px"></div>
+      </div>
+      <span class="kicker anim" style="background:#fff;color:var(--violet)">Récap</span>
+      <h1 class="anim" style="--a:up;--d:.1s">Bravo, tu as les bases ! 🎉</h1>
+      <div class="recap">
+        <div class="anim" style="--a:left;--d:.3s">🏷️ Les 5B : produit, endroit, moment, quantité, prix</div>
+        <div class="anim" style="--a:left;--d:.4s">🗺️ Zone chaude à droite, appel en zone froide</div>
+        <div class="anim" style="--a:left;--d:.5s">🎨 Clair → foncé, XS → XL, règle de 3</div>
+        <div class="anim" style="--a:left;--d:.6s">👀 Best-sellers à hauteur des yeux</div>
+        <div class="anim" style="--a:left;--d:.7s">🪟 Vitrine : 3 secondes, 1 histoire</div>
+      </div>
+      <button class="btn anim" style="--a:pop;--d:.9s;margin-top:22px;background:#fff;color:var(--violet)" onclick="go(0)">↺ Recommencer</button>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button id="prev" aria-label="Précédent">←</button>
+    <span class="count" id="count">1 / 8</span>
+    <button id="next" aria-label="Suivant">→</button>
+  </div>
+
+  <div class="pop" id="pop"><div class="sheet">
+    <div class="ico" id="pi"></div><h3 id="pt"></h3><p id="pp"></p>
+    <button class="btn close" onclick="closePop()">Compris 👍</button>
+  </div></div>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const bar=document.getElementById('bar');
+slides.forEach(()=>bar.insertAdjacentHTML('beforeend','<span><i></i></span>'));
+const segs=[...bar.children];
+
+function go(i){
+  if(i<0||i>=slides.length)return;
+  slides.forEach((s,k)=>{s.classList.remove('active','prev');if(k<i)s.classList.add('prev')});
+  // restart animations
+  const s=slides[i]; s.querySelectorAll('.anim').forEach(a=>{a.style.animation='none';a.offsetHeight;a.style.animation=''});
+  s.classList.add('active'); cur=i;
+  segs.forEach((g,k)=>g.classList.toggle('done',k<=i));
+  document.getElementById('count').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===slides.length-1;
+  if(i===slides.length-1)confetti();
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+
+// swipe
+let sx=0,sy=0;
+const dev=document.getElementById('device');
+dev.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+dev.addEventListener('touchend',e=>{
+  if(document.getElementById('pop').classList.contains('open'))return;
+  if(e.target.closest('.tabs'))return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));
+});
+
+// flip cards
+document.querySelectorAll('.card').forEach(c=>c.onclick=()=>c.classList.toggle('flip'));
+
+// popups
+const P={
+  deco:['🚪','Zone de décompression','Les 2-3 premiers mètres après l\'entrée : le client « atterrit » et ralentit. Pas de produit clé ici, il ne le verrait pas. Garde l\'espace dégagé et accueillant.'],
+  chaude:['🔥','Zone chaude','Les clients tournent instinctivement à droite. C\'est ta zone la plus visitée : place-y les nouveautés, la collection du moment et les produits à forte marge.'],
+  froide:['❄️','Zone froide','Le fond et les coins sont peu visités. Crée un « produit d\'appel » (promo, basiques, cabines) pour attirer le client jusqu\'ici et allonger son parcours.'],
+  table:['🧺','Table d\'implantation','Au centre du parcours, une table casse la monotonie et invite à toucher. Présente-y une silhouette complète pour suggérer le cross-selling (haut + bas + accessoire).'],
+  z1:['🎩','Niveau chapeau (> 1,70 m)','Peu accessible : on y met de la signalétique, des visuels ou du stock de présentation. Ça sert surtout à être vu de loin.'],
+  z2:['👀','Niveau des yeux (1,10 – 1,70 m)','Le niveau qui vend le plus ! Réserve-le aux best-sellers, nouveautés et produits à forte marge. Ce que le client voit, il l\'achète.'],
+  z3:['✋','Niveau des mains (0,60 – 1,10 m)','Facile à attraper : parfait pour les basiques, les compléments et les achats d\'impulsion (ceintures, chaussettes, accessoires).'],
+  z4:['👟','Niveau des pieds (< 0,60 m)','Le moins vendeur. On y met le stock, les produits volumineux ou les chaussures. Évite d\'y cacher une pièce phare.'],
+};
+const pop=document.getElementById('pop');
+document.querySelectorAll('[data-pop]').forEach(el=>el.addEventListener('click',()=>{
+  const d=P[el.dataset.pop];
+  document.getElementById('pi').textContent=d[0];document.getElementById('pt').textContent=d[1];document.getElementById('pp').textContent=d[2];
+  pop.classList.add('open'); el.classList.add('seen');
+}));
+function closePop(){pop.classList.remove('open')}
+pop.addEventListener('click',e=>{if(e.target===pop)closePop()});
+
+// tabs
+const tabs=[...document.querySelectorAll('#tabs button')],panels=[...document.querySelectorAll('.panel')];
+tabs.forEach(t=>t.onclick=()=>{
+  tabs.forEach(x=>x.classList.remove('on'));panels.forEach(x=>{x.classList.remove('on');x.classList.remove('anim')});
+  t.classList.add('on');panels[t.dataset.t].classList.add('on');
+});
+
+// timer
+let ticking=false;
+document.getElementById('timer').onclick=()=>{
+  if(ticking)return;ticking=true;
+  const arc=document.getElementById('arc'),tn=document.getElementById('tn');let t=3;
+  arc.style.transition='none';arc.style.strokeDashoffset=0;arc.offsetHeight;
+  arc.style.transition='stroke-dashoffset 3s linear';arc.style.strokeDashoffset=415;
+  tn.innerHTML='3<small>s</small>';
+  const iv=setInterval(()=>{t--;tn.innerHTML=t>0?t+'<small>s</small>':'👋';if(t<=0){clearInterval(iv);setTimeout(()=>{tn.innerHTML='Trop<br><small>tard !</small>';tn.style.fontSize='1.6rem';tn.style.textAlign='center';tn.style.lineHeight='1';ticking=false},700)}},1000);
+  tn.style.fontSize='';
+};
+
+// quiz
+const Q=[
+  {q:'Où place-t-on en priorité les nouveautés ?',o:['Au fond du magasin','Dans la zone chaude, à droite de l\'entrée','Juste devant la porte'],a:1,e:'La majorité des clients tournent à droite en entrant : c\'est la zone la plus vue.'},
+  {q:'Sur un portant, comment ranger les tailles ?',o:['XL → XS de gauche à droite','Au hasard, pour inciter à fouiller','XS → XL de gauche à droite'],a:2,e:'Du plus petit au plus grand, dans le sens de lecture : le client trouve sa taille immédiatement.'},
+  {q:'Quel niveau d\'étagère vend le plus ?',o:['Le niveau des yeux','Le niveau des pieds','Le niveau chapeau'],a:0,e:'Entre 1,10 m et 1,70 m : c\'est là qu\'on place best-sellers et produits à forte marge.'},
+];
+const qz=document.getElementById('quiz');let score=0;
+qz.innerHTML=Q.map((x,i)=>`<div class="q${i?'':' on'}"><div class="qt">${i+1}/${Q.length} · ${x.q}</div>${x.o.map((o,j)=>`<button class="opt" data-q="${i}" data-j="${j}">${o}</button>`).join('')}<div class="fb"></div><button class="btn qnext">${i<Q.length-1?'Question suivante →':'Voir mon score →'}</button></div>`).join('')+
+  `<div class="score"><div class="big" id="sc"></div><div id="scm" style="font-weight:600"></div><button class="btn" onclick="go(${slides.length-1})">Voir le récap →</button></div>`;
+const qs=[...qz.querySelectorAll('.q')];
+qz.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+  const i=+b.dataset.q,j=+b.dataset.j,box=qs[i];if(box.dataset.done)return;box.dataset.done=1;
+  const opts=box.querySelectorAll('.opt');
+  if(j===Q[i].a){b.classList.add('ok');score++}else{b.classList.add('ko');opts[Q[i].a].classList.add('ok')}
+  const fb=box.querySelector('.fb');fb.textContent=(j===Q[i].a?'✅ Bien vu ! ':'❌ Presque. ')+Q[i].e;fb.classList.add('on');
+  box.querySelector('.qnext').classList.add('on');
+});
+qs.forEach((box,i)=>box.querySelector('.qnext').onclick=()=>{
+  box.classList.remove('on');
+  if(i<qs.length-1)qs[i+1].classList.add('on');
+  else{const s=qz.querySelector('.score');s.classList.add('on');document.getElementById('sc').textContent=score+'/'+Q.length;
+    document.getElementById('scm').textContent=score===3?'Parfait, pro du merch ! 🏆':score===2?'Très bien, presque parfait 💪':'Refais un tour des slides 😉';if(score===3)confetti()}
+});
+
+function confetti(){
+  const c=['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#7b5cff','#fff'];
+  for(let k=0;k<60;k++){const e=document.createElement('div');e.className='confetti';
+    e.style.left=Math.random()*100+'%';e.style.background=c[k%c.length];
+    e.style.animationDuration=(1.8+Math.random()*1.8)+'s';e.style.animationDelay=Math.random()*.6+'s';
+    dev.appendChild(e);setTimeout(()=>e.remove(),4500)}
+}
+go(0);
+</script>
+</body>
+</html>

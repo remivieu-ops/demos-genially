@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Les bases d'une livraison réussie – Livreurs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1d1b2f; --cream:#fff7ef; --coral:#ff5a5f; --peach:#ffb48f;
+    --mint:#3ddc97; --sky:#4cc9f0; --violet:#7b5cff; --sun:#ffd23f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#2b2840;font-family:'Poppins',system-ui,sans-serif;color:var(--ink);overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+
+  /* Phone frame */
+  .device{position:relative;width:100vw;height:100dvh;background:var(--cream);overflow:hidden}
+  @media (min-width:600px){
+    .device{width:400px;height:min(820px,94vh);border-radius:38px;box-shadow:0 0 0 10px #111,0 30px 80px rgba(0,0,0,.5)}
+  }
+
+  /* Top bar */
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:20;padding:14px 18px 0;display:flex;gap:5px}
+  .topbar span{flex:1;height:4px;border-radius:4px;background:rgba(29,27,47,.15);overflow:hidden}
+  .topbar span i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s}
+  .topbar span.done i{width:100%}
+
+  /* Slides */
+  .slides{position:absolute;inset:0}
+  .slide{position:absolute;inset:0;padding:44px 22px 90px;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transform:translateX(40px);transition:opacity .45s,transform .45s}
+  .slide.active{opacity:1;pointer-events:auto;transform:none}
+  .slide.prev{transform:translateX(-40px)}
+
+  /* Entrance animations (Genially style) */
+  .anim{opacity:0}
+  .slide.active .anim{animation:var(--a,pop) .6s cubic-bezier(.2,1.4,.4,1) forwards;animation-delay:var(--d,0s)}
+  @keyframes pop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}
+  @keyframes up{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:none}}
+  @keyframes left{0%{opacity:0;transform:translateX(-40px)}100%{opacity:1;transform:none}}
+  @keyframes spin{0%{opacity:0;transform:rotate(-90deg) scale(.3)}100%{opacity:1;transform:none}}
+
+  /* Decorative blobs */
+  .blob{position:absolute;border-radius:50%;z-index:-1;filter:blur(.5px)}
+  .slide>*{position:relative;z-index:1}
+  .deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+
+  h1{font-size:2.3rem;line-height:1.05;font-weight:800}
+  h2{font-size:1.55rem;line-height:1.15;font-weight:800;margin-bottom:6px}
+  .kicker{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--ink);color:#fff;padding:5px 11px;border-radius:30px;margin-bottom:12px;align-self:flex-start}
+  p.lead{font-size:.92rem;line-height:1.45;opacity:.85;margin-bottom:14px}
+  .hint{font-size:.75rem;opacity:.6;text-align:center;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:6px}
+  .hint b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--coral);color:#fff;font-size:.8rem}
+
+  /* Cover */
+  .cover{background:var(--coral);color:#fff}
+  .cover h1{font-size:2.7rem;margin-top:auto}
+  .cover h1 em{font-style:normal;color:var(--sun)}
+  .cover .sub{font-size:1rem;margin:14px 0 26px;opacity:.95}
+  .btn{border:none;font:inherit;font-weight:800;font-size:1rem;cursor:pointer;padding:15px 24px;border-radius:50px;
+    background:var(--ink);color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .15s}
+  .btn:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+  .hanger{width:150px;align-self:center;margin-top:40px}
+
+  /* Pulse hotspot */
+  .hot{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--coral);color:#fff;border:3px solid #fff;
+    display:grid;place-items:center;font-weight:800;font-size:1.1rem;cursor:pointer;z-index:5;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+  .hot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--coral);animation:pulse 1.6s infinite}
+  .hot.seen{background:var(--mint)} .hot.seen::after{border-color:var(--mint)}
+  @keyframes pulse{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.7);opacity:0}}
+
+  /* 5B cards */
+  .grid5{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .card{perspective:600px;height:96px;cursor:pointer}
+  .card:last-child{grid-column:span 2}
+  .card .in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+  .card.flip .in{transform:rotateY(180deg)}
+  .card .f,.card .b{position:absolute;inset:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .card .f{font-weight:800;font-size:1rem;color:#fff}
+  .card .f small{font-size:1.6rem;line-height:1}
+  .card .b{transform:rotateY(180deg);background:#fff;border:3px solid var(--ink);font-size:.78rem;line-height:1.3}
+
+  /* Store plan */
+  .plan{position:relative;width:100%;aspect-ratio:1/1.05;margin-top:4px}
+  .plan svg{width:100%;height:100%}
+
+  /* Popup */
+  .pop{position:absolute;inset:0;z-index:50;background:rgba(29,27,47,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+  .pop.open{opacity:1;pointer-events:auto}
+  .pop .sheet{width:100%;background:#fff;border-radius:28px 28px 0 0;padding:26px 22px 30px;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,1.2,.4,1)}
+  .pop.open .sheet{transform:none}
+  .pop .ico{font-size:2.2rem}
+  .pop h3{font-size:1.25rem;font-weight:800;margin:6px 0}
+  .pop p{font-size:.9rem;line-height:1.5;opacity:.85}
+  .pop .close{margin-top:18px;width:100%}
+
+  /* Tabs rules */
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+  .tabs button{flex:none;border:2px solid var(--ink);background:#fff;font:inherit;font-weight:600;font-size:.78rem;padding:7px 12px;border-radius:30px;cursor:pointer}
+  .tabs button.on{background:var(--ink);color:#fff}
+  .panel{display:none;background:#fff;border-radius:22px;padding:16px;box-shadow:0 8px 0 rgba(29,27,47,.08);flex:1;flex-direction:column}
+  .panel.on{display:flex;animation:up .45s ease}
+  .panel h4{font-size:1.05rem;font-weight:800;margin-bottom:6px}
+  .panel p{font-size:.85rem;line-height:1.45;opacity:.85}
+  .visual{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-top:12px;min-height:130px}
+  .tee{width:38px;height:46px;clip-path:polygon(25% 0,40% 8%,60% 8%,75% 0,100% 18%,88% 36%,78% 30%,78% 100%,22% 100%,22% 30%,12% 36%,0 18%);}
+  .size{display:flex;flex-direction:column;align-items:center;font-size:.7rem;font-weight:800;gap:3px}
+
+  /* Shelf */
+  .shelf{position:relative;flex:1;display:flex;gap:12px;margin-top:6px}
+  .ruler{display:flex;flex-direction:column;width:44px;font-size:.65rem;font-weight:600;text-align:right;opacity:.6}
+  .ruler div{flex:1;border-top:1px dashed var(--ink);padding-top:2px}
+  .zones{flex:1;display:flex;flex-direction:column;gap:6px}
+  .zone{flex:1;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:pointer;color:#fff;font-weight:800;font-size:.95rem;transition:transform .2s}
+  .zone:active{transform:scale(.97)}
+  .zone .stars{font-size:.75rem;opacity:.9}
+
+  /* Window */
+  .timer{width:150px;height:150px;border-radius:50%;margin:8px auto 14px;display:grid;place-items:center;position:relative;cursor:pointer}
+  .timer svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .timer .n{font-size:3rem;font-weight:800}
+  .timer .n small{font-size:1rem}
+  .chips{display:flex;flex-direction:column;gap:8px}
+  .chip{display:flex;gap:10px;align-items:center;background:#fff;border-radius:16px;padding:10px 12px;font-size:.82rem;line-height:1.35;box-shadow:0 4px 0 rgba(29,27,47,.07)}
+  .chip b{font-size:1.4rem}
+
+  /* Quiz */
+  .q{display:none;flex-direction:column;gap:9px}
+  .q.on{display:flex;animation:up .4s ease}
+  .q .qt{font-weight:800;font-size:1.05rem;line-height:1.3;margin-bottom:4px}
+  .opt{border:2px solid var(--ink);background:#fff;border-radius:16px;padding:13px 14px;text-align:left;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s,transform .2s}
+  .opt.ok{background:var(--mint);border-color:var(--mint);color:#fff;animation:pop .4s}
+  .opt.ko{background:var(--coral);border-color:var(--coral);color:#fff;animation:shake .4s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .fb{font-size:.82rem;line-height:1.4;background:var(--ink);color:#fff;border-radius:14px;padding:11px 13px;display:none}
+  .fb.on{display:block;animation:up .35s}
+  .qnext{align-self:flex-end;display:none}
+  .qnext.on{display:inline-block}
+  .score{text-align:center;display:none;flex-direction:column;align-items:center;gap:10px;margin-top:20px}
+  .score.on{display:flex;animation:pop .6s}
+  .score .big{font-size:4rem;font-weight:800;line-height:1}
+
+  /* End */
+  .end{background:var(--violet);color:#fff}
+  .recap{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+  .recap div{background:rgba(255,255,255,.14);border-radius:14px;padding:10px 13px;font-size:.86rem;display:flex;gap:10px;align-items:center}
+  .confetti{position:absolute;width:10px;height:14px;top:-20px;z-index:60;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+  /* Nav */
+  .nav{position:absolute;bottom:18px;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:0 18px}
+  .nav button{width:50px;height:50px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .nav button:disabled{opacity:.2}
+  .nav .count{font-weight:800;font-size:.85rem;background:#fff;padding:6px 14px;border-radius:30px;box-shadow:0 3px 0 rgba(29,27,47,.1)}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <div class="topbar" id="bar"></div>
+
+  <div class="slides" id="slides">
+
+    <!-- 1. COVER -->
+    <section class="slide cover active">
+      <div class="deco">
+        <div class="blob" style="width:260px;height:260px;background:var(--peach);top:-80px;right:-90px"></div>
+        <div class="blob" style="width:140px;height:140px;background:var(--sun);bottom:120px;left:-50px"></div>
+      </div>
+      <svg class="hanger anim" style="--a:spin;--d:.1s;width:170px" viewBox="0 0 220 130" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 96V34h112v62"/>
+        <path d="M126 52h40l30 26v18h-70"/>
+        <path d="M14 96h18M70 96h68M176 96h20"/>
+        <circle cx="51" cy="100" r="15"/><circle cx="157" cy="100" r="15"/>
+        <path d="M48 52h44M48 70h28"/>
+      </svg>
+      <span class="kicker anim" style="--a:left;--d:.3s;background:#fff;color:var(--coral)">Micro-learning · 3 min</span>
+      <h1 class="anim" style="--a:up;--d:.45s">Les bases d'une <em>livraison</em> réussie</h1>
+      <p class="sub anim" style="--a:up;--d:.6s">Chaque colis livré, c'est un client satisfait 📦🚐</p>
+      <button class="btn anim" style="--a:pop;--d:.8s" onclick="go(1)">C'est parti →</button>
+    </section>
+
+    <!-- 2. LES 5 REFLEXES -->
+    <section class="slide">
+      <div class="deco"><div class="blob" style="width:200px;height:200px;background:var(--sun);opacity:.5;top:-60px;right:-70px"></div></div>
+      <span class="kicker anim">01 · Les fondamentaux</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Les 5 réflexes du livreur</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Une livraison réussie, c'est <b>le bon colis, au bon endroit, au bon moment</b>. Touche chaque carte pour la retourner.</p>
+      <div class="grid5">
+        <div class="card anim" style="--d:.3s"><div class="in"><div class="f" style="background:var(--coral)"><small>📦</small>Bon colis</div><div class="b">Je scanne et je vérifie le nom et l'adresse avant de descendre du véhicule.</div></div></div>
+        <div class="card anim" style="--d:.4s"><div class="in"><div class="f" style="background:var(--violet)"><small>📍</small>Bon endroit</div><div class="b">Adresse exacte, étage, digicode : je lis les consignes du client.</div></div></div>
+        <div class="card anim" style="--d:.5s"><div class="in"><div class="f" style="background:var(--sky)"><small>⏰</small>Bon moment</div><div class="b">Je respecte le créneau annoncé, et je préviens en cas de retard.</div></div></div>
+        <div class="card anim" style="--d:.6s"><div class="in"><div class="f" style="background:var(--mint)"><small>✨</small>Bon état</div><div class="b">Le colis arrive intact : pas de choc, pas de pluie, pas de colis écrasé.</div></div></div>
+        <div class="card anim" style="--d:.7s"><div class="in"><div class="f" style="background:var(--ink)"><small>📸</small>Bonne preuve</div><div class="b">Signature, code ou photo : sans preuve, la livraison n'est pas terminée.</div></div></div>
+      </div>
+      <div class="hint"><b>↻</b> 5 cartes à retourner</div>
+    </section>
+
+    <!-- 3. LA TOURNEE -->
+    <section class="slide">
+      <span class="kicker anim">02 · Ta tournée</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Une tournée, 4 moments clés</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Explore chaque étape en touchant les <b style="color:var(--coral)">+</b></p>
+      <div class="plan anim" style="--d:.3s">
+        <svg viewBox="0 0 300 315">
+          <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#7b5cff"/></marker></defs>
+          <rect x="6" y="6" width="288" height="290" rx="20" fill="#fff" stroke="#1d1b2f" stroke-width="4"/>
+          <g fill="#ffd23f">
+            <rect x="30" y="28" width="60" height="44" rx="8"/><rect x="110" y="28" width="70" height="44" rx="8"/>
+            <rect x="200" y="28" width="70" height="44" rx="8"/><rect x="200" y="110" width="70" height="60" rx="8"/>
+            <rect x="110" y="110" width="70" height="60" rx="8"/><rect x="30" y="110" width="60" height="60" rx="8"/>
+          </g>
+          <rect x="30" y="210" width="90" height="60" rx="10" fill="#1d1b2f"/>
+          <text x="75" y="245" fill="#fff" font-size="12" font-weight="700" text-anchor="middle" font-family="Poppins">DÉPÔT</text>
+          <path d="M122 240 C200 245 290 220 280 180 S 250 92 190 90 S 100 92 100 175 S 70 205 72 205" fill="none" stroke="#7b5cff" stroke-width="4" stroke-dasharray="8 7" marker-end="url(#ar)"/>
+          <circle cx="235" cy="95" r="8" fill="#ff5a5f"/><circle cx="145" cy="92" r="8" fill="#ff5a5f"/><circle cx="60" cy="92" r="8" fill="#ff5a5f" opacity=".35"/>
+        </svg>
+        <div class="hot" style="left:18%;top:68%" data-pop="depot">+</div>
+        <div class="hot" style="left:84%;top:52%" data-pop="route">+</div>
+        <div class="hot" style="left:45%;top:22%" data-pop="remise">+</div>
+        <div class="hot" style="left:10%;top:22%" data-pop="absent">+</div>
+      </div>
+      <div class="hint"><b>4</b> étapes à découvrir</div>
+    </section>
+
+    <!-- 4. REGLES D'OR -->
+    <section class="slide">
+      <span class="kicker anim">03 · Les règles d'or</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Sur le terrain</h2>
+      <div class="tabs anim" style="--a:left;--d:.2s" id="tabs">
+        <button class="on" data-t="0">🛡️ Sécurité</button>
+        <button data-t="1">💪 Port de charge</button>
+        <button data-t="2">🙂 Relation client</button>
+        <button data-t="3">📸 Photo preuve</button>
+      </div>
+      <div class="panel on anim" style="--a:up;--d:.3s">
+        <h4>La route d'abord, le colis ensuite</h4>
+        <p>Ceinture attachée, même pour 200 m. Pas de téléphone en conduisant : tu consultes l'appli <b>à l'arrêt</b>. Warnings et frein à main à chaque stationnement.</p>
+        <div class="visual" style="gap:14px;font-size:2.4rem;align-items:center">
+          <span>🔒</span><span>📵</span><span>⚠️</span><span>🅿️</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Plie les jambes, pas le dos</h4>
+        <p>Colis près du corps, dos droit, et tu pousses sur les jambes. Au-delà de 25 kg ou pour un volume encombrant, utilise le diable ou demande de l'aide.</p>
+        <div class="visual">
+          <svg viewBox="0 0 220 120" width="220">
+            <g stroke="#1d1b2f" stroke-width="5" stroke-linecap="round" fill="none">
+              <circle cx="50" cy="18" r="10" fill="#3ddc97" stroke="none"/><path d="M50 30v40M50 70l-14 22 6 22M50 70l14 22-6 22M50 44l18 18"/>
+              <circle cx="160" cy="18" r="10" fill="#ff5a5f" stroke="none"/><path d="M160 30 Q 175 50 190 66M160 30l-4 50v34M160 30l6 50v34"/>
+            </g>
+            <rect x="60" y="58" width="22" height="20" rx="3" fill="#ffb48f"/>
+            <rect x="184" y="64" width="22" height="20" rx="3" fill="#ffb48f"/>
+            <text x="50" y="16" font-size="0">ok</text>
+            <text x="20" y="118" font-size="12" font-weight="800" fill="#3ddc97" font-family="Poppins">✓ OUI</text>
+            <text x="172" y="118" font-size="12" font-weight="800" fill="#ff5a5f" font-family="Poppins">✗ NON</text>
+          </svg>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Tu es le visage de l'entreprise</h4>
+        <p>Souvent, tu es la <b>seule personne</b> de l'entreprise que le client rencontre. Bonjour, sourire, prénom ou nom du client : 10 secondes qui changent tout.</p>
+        <div class="visual" style="gap:10px;font-size:2.4rem;align-items:center">
+          <span>👋</span><span>🙂</span><span>🤝</span><span>⭐</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Une photo qui prouve vraiment</h4>
+        <p>On doit voir <b>le colis ET le lieu</b> : porte, numéro, boîte aux lettres ou réception. Photo nette, de jour si possible, jamais un gros plan du carton seul.</p>
+        <div class="visual">
+          <svg viewBox="0 0 220 110" width="220">
+            <rect x="8" y="6" width="96" height="98" rx="10" fill="#fff" stroke="#3ddc97" stroke-width="4"/>
+            <rect x="30" y="16" width="52" height="70" rx="4" fill="#7b5cff"/><circle cx="74" cy="52" r="3" fill="#fff"/>
+            <text x="56" y="34" font-size="11" font-weight="800" fill="#fff" text-anchor="middle" font-family="Poppins">12</text>
+            <rect x="40" y="70" width="30" height="22" rx="3" fill="#ffb48f"/>
+            <rect x="116" y="6" width="96" height="98" rx="10" fill="#fff" stroke="#ff5a5f" stroke-width="4"/>
+            <rect x="128" y="20" width="72" height="70" rx="4" fill="#ffb48f"/>
+            <text x="56" y="104" font-size="0">ok</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CHARGEMENT -->
+    <section class="slide">
+      <span class="kicker anim">04 · Le chargement</span>
+      <h2 class="anim" style="--a:up;--d:.1s">Un véhicule bien chargé = une tournée fluide</h2>
+      <p class="lead anim" style="--a:up;--d:.2s">Touche chaque zone pour savoir quoi y mettre.</p>
+      <div class="shelf anim" style="--a:up;--d:.3s">
+        <div class="zones">
+          <div class="zone" style="background:var(--sky)" data-pop="c1"><span>Étagère haute</span><span class="stars">🪶</span></div>
+          <div class="zone" style="background:var(--coral);flex:1.3" data-pop="c2"><span>Près des portes 🚪</span><span class="stars">1ers arrêts</span></div>
+          <div class="zone" style="background:var(--violet)" data-pop="c3"><span>Fond du véhicule</span><span class="stars">Fin de tournée</span></div>
+          <div class="zone" style="background:var(--ink)" data-pop="c4"><span>Plancher</span><span class="stars">🏋️</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. REMISE -->
+    <section class="slide">
+      <div class="deco"><div class="blob" style="width:220px;height:220px;background:var(--mint);opacity:.35;bottom:60px;right:-90px"></div></div>
+      <span class="kicker anim">05 · La remise du colis</span>
+      <h2 class="anim" style="--a:up;--d:.1s">30 secondes pour laisser une bonne impression</h2>
+      <div class="timer anim" style="--a:spin;--d:.25s" id="timer">
+        <svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="66" fill="#fff" stroke="#eee" stroke-width="12"/>
+          <circle id="arc" cx="75" cy="75" r="66" fill="none" stroke="#ff5a5f" stroke-width="12" stroke-linecap="round" stroke-dasharray="415" stroke-dashoffset="0"/></svg>
+        <div class="n" id="tn">30<small>s</small></div>
+      </div>
+      <div class="chips">
+        <div class="chip anim" style="--a:left;--d:.4s"><b>👋</b><span><b>Bonjour + nom du client</b> : tu confirmes que c'est la bonne personne.</span></div>
+        <div class="chip anim" style="--a:left;--d:.5s"><b>🔐</b><span><b>Code ou signature</b> : tu valides dans l'appli avant de partir.</span></div>
+        <div class="chip anim" style="--a:left;--d:.6s"><b>😊</b><span><b>« Bonne journée ! »</b> : le client se souvient de la fin de l'échange.</span></div>
+      </div>
+      <div class="hint" style="margin-top:12px"><b>▶</b> Touche le chrono</div>
+    </section>
+
+    <!-- 7. QUIZ -->
+    <section class="slide">
+      <span class="kicker anim">06 · Quiz express</span>
+      <h2 class="anim" style="--a:up;--d:.1s">À toi de jouer !</h2>
+      <div id="quiz" class="anim" style="--a:up;--d:.2s;margin-top:8px"></div>
+    </section>
+
+    <!-- 8. END -->
+    <section class="slide end">
+      <div class="deco">
+        <div class="blob" style="width:240px;height:240px;background:var(--coral);opacity:.6;top:-70px;left:-80px"></div>
+        <div class="blob" style="width:160px;height:160px;background:var(--sun);opacity:.7;bottom:70px;right:-60px"></div>
+      </div>
+      <span class="kicker anim" style="background:#fff;color:var(--violet)">Récap</span>
+      <h1 class="anim" style="--a:up;--d:.1s">Bravo, tu as les bases ! 🎉</h1>
+      <div class="recap">
+        <div class="anim" style="--a:left;--d:.3s">📦 Bon colis, bon endroit, bon moment, bon état, bonne preuve</div>
+        <div class="anim" style="--a:left;--d:.4s">🗺️ Contrôle au dépôt, procédure si client absent</div>
+        <div class="anim" style="--a:left;--d:.5s">🛡️ Ceinture, téléphone à l'arrêt, dos droit</div>
+        <div class="anim" style="--a:left;--d:.6s">🚪 Premiers arrêts près des portes, lourds au sol</div>
+        <div class="anim" style="--a:left;--d:.7s">📸 Photo preuve : colis + lieu visibles</div>
+      </div>
+      <button class="btn anim" style="--a:pop;--d:.9s;margin-top:22px;background:#fff;color:var(--violet)" onclick="go(0)">↺ Recommencer</button>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button id="prev" aria-label="Précédent">←</button>
+    <span class="count" id="count">1 / 8</span>
+    <button id="next" aria-label="Suivant">→</button>
+  </div>
+
+  <div class="pop" id="pop"><div class="sheet">
+    <div class="ico" id="pi"></div><h3 id="pt"></h3><p id="pp"></p>
+    <button class="btn close" onclick="closePop()">Compris 👍</button>
+  </div></div>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const bar=document.getElementById('bar');
+slides.forEach(()=>bar.insertAdjacentHTML('beforeend','<span><i></i></span>'));
+const segs=[...bar.children];
+
+function go(i){
+  if(i<0||i>=slides.length)return;
+  slides.forEach((s,k)=>{s.classList.remove('active','prev');if(k<i)s.classList.add('prev')});
+  const s=slides[i]; s.querySelectorAll('.anim').forEach(a=>{a.style.animation='none';a.offsetHeight;a.style.animation=''});
+  s.classList.add('active'); cur=i;
+  segs.forEach((g,k)=>g.classList.toggle('done',k<=i));
+  document.getElementById('count').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===slides.length-1;
+  if(i===slides.length-1)confetti();
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+
+let sx=0,sy=0;
+const dev=document.getElementById('device');
+dev.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+dev.addEventListener('touchend',e=>{
+  if(document.getElementById('pop').classList.contains('open'))return;
+  if(e.target.closest('.tabs'))return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));
+});
+
+document.querySelectorAll('.card').forEach(c=>c.onclick=()=>c.classList.toggle('flip'));
+
+const P={
+  depot:['🏭','Au dépôt : le départ','Tour du véhicule (pneus, feux, rétros, niveau de carburant ou de charge), puis tu scannes chaque colis au chargement. Un colis manquant se signale ici, pas à 15 km.'],
+  route:['🚐','Sur la route','Suis l\'ordre de tournée proposé par l\'appli : il optimise ton temps. Stationne sans gêner (jamais sur un passage piéton ou une piste cyclable), warnings allumés.'],
+  remise:['🏠','À la porte du client','Vérifie le nom et l\'adresse sur l\'étiquette, sonne, présente-toi. Remets le colis en main propre, puis valide avec la signature, le code ou la photo.'],
+  absent:['📭','Client absent','Pas de colis laissé devant la porte sans accord ! Applique la procédure : appel du client, livraison chez un voisin accepté, point relais ou nouvelle tentative, avec un avis de passage.'],
+  c1:['🪶','Étagère haute','Colis légers et fragiles uniquement : rien de lourd au-dessus de ta tête, ni au-dessus d\'un colis qui peut s\'écraser.'],
+  c2:['🚪','Près des portes','Les colis de tes premiers arrêts. Le principe : dernier chargé, premier livré. Tu ne fouilles pas tout le véhicule à chaque arrêt.'],
+  c3:['📚','Fond du véhicule','Les colis de fin de tournée, rangés dans l\'ordre des arrêts. Un chargement bien organisé peut te faire gagner 30 minutes sur ta journée.'],
+  c4:['🏋️','Plancher','Les colis lourds et volumineux, bien calés. Ils ne bougent pas au freinage et ne tombent pas sur toi à l\'ouverture des portes.'],
+};
+const pop=document.getElementById('pop');
+document.querySelectorAll('[data-pop]').forEach(el=>el.addEventListener('click',()=>{
+  const d=P[el.dataset.pop];
+  document.getElementById('pi').textContent=d[0];document.getElementById('pt').textContent=d[1];document.getElementById('pp').textContent=d[2];
+  pop.classList.add('open'); el.classList.add('seen');
+}));
+function closePop(){pop.classList.remove('open')}
+pop.addEventListener('click',e=>{if(e.target===pop)closePop()});
+
+const tabs=[...document.querySelectorAll('#tabs button')],panels=[...document.querySelectorAll('.panel')];
+tabs.forEach(t=>t.onclick=()=>{
+  tabs.forEach(x=>x.classList.remove('on'));panels.forEach(x=>{x.classList.remove('on');x.classList.remove('anim')});
+  t.classList.add('on');panels[t.dataset.t].classList.add('on');
+});
+
+let ticking=false;
+document.getElementById('timer').onclick=()=>{
+  if(ticking)return;ticking=true;
+  const arc=document.getElementById('arc'),tn=document.getElementById('tn');let t=30;
+  tn.style.fontSize='';tn.style.textAlign='';tn.style.lineHeight='';
+  arc.style.transition='none';arc.style.strokeDashoffset=0;arc.offsetHeight;
+  arc.style.transition='stroke-dashoffset 3s linear';arc.style.strokeDashoffset=415;
+  tn.innerHTML='30<small>s</small>';
+  const iv=setInterval(()=>{t-=10;tn.innerHTML=t>0?t+'<small>s</small>':'✅';if(t<=0){clearInterval(iv);setTimeout(()=>{tn.innerHTML='Colis<br><small>livré !</small>';tn.style.fontSize='1.6rem';tn.style.textAlign='center';tn.style.lineHeight='1';ticking=false},700)}},1000);
+};
+
+const Q=[
+  {q:'Le client est absent. Que fais-tu ?',o:['Je laisse le colis devant la porte','J\'applique la procédure : voisin, point relais ou nouvelle tentative, avec un avis de passage','Je repars sans rien signaler'],a:1,e:'Un colis laissé sans accord peut être volé ou abîmé : la procédure protège le client et toi.'},
+  {q:'Où charges-tu les colis de tes premiers arrêts ?',o:['Au fond du véhicule','Sous les colis lourds','Près des portes'],a:2,e:'Dernier chargé, premier livré : tu les attrapes tout de suite, sans fouiller.'},
+  {q:'Qu\'est-ce qu\'une bonne photo de preuve ?',o:['Le colis et le lieu de dépôt bien visibles','Un gros plan de l\'étiquette','Pas besoin de photo si personne n\'a vu'],a:0,e:'On doit pouvoir reconnaître le colis ET l\'endroit (porte, numéro, boîte aux lettres).'},
+];
+const qz=document.getElementById('quiz');let score=0;
+qz.innerHTML=Q.map((x,i)=>`<div class="q${i?'':' on'}"><div class="qt">${i+1}/${Q.length} · ${x.q}</div>${x.o.map((o,j)=>`<button class="opt" data-q="${i}" data-j="${j}">${o}</button>`).join('')}<div class="fb"></div><button class="btn qnext">${i<Q.length-1?'Question suivante →':'Voir mon score →'}</button></div>`).join('')+
+  `<div class="score"><div class="big" id="sc"></div><div id="scm" style="font-weight:600"></div><button class="btn" onclick="go(${slides.length-1})">Voir le récap →</button></div>`;
+const qs=[...qz.querySelectorAll('.q')];
+qz.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+  const i=+b.dataset.q,j=+b.dataset.j,box=qs[i];if(box.dataset.done)return;box.dataset.done=1;
+  const opts=box.querySelectorAll('.opt');
+  if(j===Q[i].a){b.classList.add('ok');score++}else{b.classList.add('ko');opts[Q[i].a].classList.add('ok')}
+  const fb=box.querySelector('.fb');fb.textContent=(j===Q[i].a?'✅ Bien vu ! ':'❌ Presque. ')+Q[i].e;fb.classList.add('on');
+  box.querySelector('.qnext').classList.add('on');
+});
+qs.forEach((box,i)=>box.querySelector('.qnext').onclick=()=>{
+  box.classList.remove('on');
+  if(i<qs.length-1)qs[i+1].classList.add('on');
+  else{const s=qz.querySelector('.score');s.classList.add('on');document.getElementById('sc').textContent=score+'/'+Q.length;
+    document.getElementById('scm').textContent=score===3?'Parfait, livreur pro ! 🏆':score===2?'Très bien, presque parfait 💪':'Refais un tour des slides 😉';if(score===3)confetti()}
+});
+
+function confetti(){
+  const c=['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#7b5cff','#fff'];
+  for(let k=0;k<60;k++){const e=document.createElement('div');e.className='confetti';
+    e.style.left=Math.random()*100+'%';e.style.background=c[k%c.length];
+    e.style.animationDuration=(1.8+Math.random()*1.8)+'s';e.style.animationDelay=Math.random()*.6+'s';
+    dev.appendChild(e);setTimeout(()=>e.remove(),4500)}
+}
+go(0);
+</script>
+</body>
+</html>

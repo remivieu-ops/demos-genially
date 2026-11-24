@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réussir son rayon déco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: énergique, concret, langage terrain du vendeur en magasin
+   IDEA: le rayon déco lui-même — il se monte, on l'inspecte, on le répare
+   PICTURE: une étagère illustrée qui se remplit produit par produit, avec points chauds et erreurs à repérer
+   COLOUR and TYPE: blanc chaud, encre aubergine, accent corail, bois clair ; Outfit 800 / DM Sans
+   LAYOUT: format téléphone, 3 écrans en swipe, progression en haut, bouton suivant en bas */
+:root{color-scheme:light dark;
+--bg:light-dark(#fbf7f2,#1c1420);--card:light-dark(#ffffff,#2a2030);--ink:light-dark(#2b1d2e,#f6eef4);--mute:light-dark(#6d5f70,#bfb0c2);
+--line:light-dark(#eadfd6,#3d3044);--accent:#ff6b4a;--back:light-dark(#f3e6d8,#3a2d3d);--wood:#c99a6b;--woodd:#a8794d;--ok:#2f8f5b;--ko:#d24242;--teal:#1d8aa3}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:light-dark(#efe6dc,#120c15);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif;overflow:hidden;display:grid;place-items:center}
+.phone{width:100%;max-width:420px;height:100dvh;max-height:880px;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden}
+@media(min-width:460px){.phone{border-radius:34px;height:calc(100dvh - 32px);box-shadow:0 30px 60px -20px rgba(43,29,46,.35);border:8px solid var(--ink)}}
+header{padding:16px 20px 10px;display:flex;align-items:center;gap:12px;position:relative;z-index:2}
+.logo{font:800 15px Outfit,sans-serif}.logo b{color:var(--accent)}
+.prog{flex:1;display:flex;gap:6px}
+.prog i{flex:1;height:6px;border-radius:9px;background:var(--line);overflow:hidden;position:relative}
+.prog i::after{content:"";position:absolute;inset:0;width:var(--w,0%);background:var(--accent);transition:width .5s cubic-bezier(.3,1.4,.5,1)}
+.time{font-size:13px;color:var(--mute);white-space:nowrap}
+.track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;position:relative;z-index:1}
+.track::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;overflow-x:hidden;padding:4px 20px 24px;position:relative}
+.blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.16;z-index:-1;animation:float 9s ease-in-out infinite}
+.b1{width:180px;height:180px;background:var(--accent);top:-40px;right:-60px}
+.b2{width:120px;height:120px;background:var(--teal);top:240px;left:-50px;animation-delay:-3s}
+@keyframes float{50%{transform:translate(-14px,18px) scale(1.08)}}
+.kick{font-size:13px;font-weight:700;color:var(--accent)}
+h1{font:800 31px/1.05 Outfit,sans-serif;margin:4px 0 8px;text-wrap:balance;letter-spacing:-.02em}
+h2{font:800 20px/1.1 Outfit,sans-serif;margin:20px 0 8px}
+p{margin:0 0 12px}.sm{font-size:14px;color:var(--mute)}
+/* reveal */
+.r{opacity:0;transform:translateY(18px)}
+.live .r{animation:up .6s cubic-bezier(.2,1.3,.4,1) forwards;animation-delay:var(--d,0s)}
+@keyframes up{to{opacity:1;transform:none}}
+/* shelf */
+.fig{position:relative;margin:6px 0 4px;aspect-ratio:320/270}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.it{transform-box:fill-box;transform-origin:50% 100%;opacity:0}
+.live .it{animation:drop .7s cubic-bezier(.25,1.6,.45,1) forwards;animation-delay:calc(.35s + var(--d,0s))}
+@keyframes drop{0%{opacity:0;transform:translateY(-60px) scale(.7)}60%{opacity:1}100%{opacity:1;transform:none}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick 1.1s ease-in-out infinite alternate}
+@keyframes flick{to{transform:scaleY(.75) scaleX(1.15)}}
+.sign{transform-box:fill-box;transform-origin:50% 0;opacity:0}
+.live .sign{animation:swing 1.4s ease-out forwards;animation-delay:1.6s}
+@keyframes swing{0%{opacity:0;transform:rotate(-25deg)}30%{opacity:1;transform:rotate(14deg)}55%{transform:rotate(-7deg)}80%{transform:rotate(3deg)}100%{opacity:1;transform:none}}
+.hs{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:0;background:none;cursor:pointer;padding:0;opacity:0}
+.live .hs{animation:up .4s ease-out forwards;animation-delay:2.2s}
+.hs::before,.hs::after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px #fff}
+.hs::after{background:none;box-shadow:0 0 0 3px var(--accent);animation:ping 1.6s ease-out infinite}
+.hs.seen::before{background:var(--ok)}.hs.seen::after{animation:none;box-shadow:none}
+.hs span{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:800 13px Outfit,sans-serif;z-index:1}
+@keyframes ping{from{transform:scale(1);opacity:1}to{transform:scale(2.2);opacity:0}}
+.info{background:var(--ink);color:var(--bg);border-radius:18px;padding:14px 16px;min-height:96px}
+.info b{font:800 17px Outfit,sans-serif;display:block;margin-bottom:2px;color:var(--accent)}
+.info.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.92);opacity:.4}}
+.rules{display:flex;flex-wrap:wrap;gap:8px}
+.rules span{padding:8px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+.rules span i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+/* hunt */
+.hud{display:flex;align-items:center;gap:12px;margin:6px 0}
+.ring{width:54px;height:54px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:800 17px Outfit,sans-serif}
+.found{flex:1;font-weight:700}
+.found .bar{height:10px;border-radius:9px;background:var(--line);margin-top:4px;overflow:hidden}
+.found .bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .5s cubic-bezier(.3,1.5,.5,1)}
+.hunt{cursor:crosshair}
+.err{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:0;background:none;cursor:crosshair;padding:0}
+.err.got{border:4px solid var(--ok);animation:circ .5s cubic-bezier(.3,1.7,.5,1);background:rgba(47,143,91,.12)}
+.err.got::after{content:attr(data-n);position:absolute;top:-10px;right:-10px;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#fff;font:800 13px/24px Outfit,sans-serif;text-align:center}
+.err.miss{border:4px dashed var(--ko);animation:circ .5s}
+@keyframes circ{from{transform:scale(2);opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.mark{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;border:3px solid var(--ko);pointer-events:none;animation:fade .7s forwards}
+@keyframes fade{to{opacity:0;transform:scale(1.6)}}
+.log{display:grid;gap:8px;margin-top:10px}
+.log div{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ok);border-radius:12px;padding:9px 12px;font-size:14px;animation:slide .45s cubic-bezier(.3,1.4,.5,1)}
+.log div.ko{border-left-color:var(--ko)}
+.log b{display:block}
+@keyframes slide{from{opacity:0;transform:translateX(40px)}}
+.start{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(3px);border-radius:16px;z-index:3}
+.start[hidden]{display:none}
+/* quiz */
+.q{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.q p{font-weight:700;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;min-height:46px;margin:6px 0;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 15px "DM Sans",sans-serif;cursor:pointer;transition:transform .15s}
+.opt:active{transform:scale(.97)}
+.opt.good{background:var(--ok);color:#fff;border-color:var(--ok);animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.opt.bad{background:var(--ko);color:#fff;border-color:var(--ko);animation:shake .4s}
+.q .ex{font-size:13px;color:var(--mute);margin:6px 0 0;display:none}.q.done .ex{display:block;animation:up .4s forwards}
+.badge{display:none;text-align:center;padding:18px;border-radius:22px;background:var(--ink);color:var(--bg);margin-top:6px}
+.badge.on{display:block;animation:pop .7s cubic-bezier(.3,1.6,.5,1)}
+.badge svg{width:110px;height:110px;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.badge b{display:block;font:800 22px Outfit,sans-serif;margin-top:6px}
+.note{font-size:13px;color:var(--mute);margin-top:14px}
+/* footer */
+.next{padding:12px 20px 18px;display:flex;gap:10px;border-top:1px solid var(--line);background:var(--bg);position:relative;z-index:2}
+button.btn{flex:1;min-height:48px;border-radius:14px;border:0;font:700 16px "DM Sans",sans-serif;cursor:pointer;background:var(--accent);color:#fff;transition:transform .15s}
+button.btn:active{transform:scale(.96)}
+button.btn.ghost{flex:0 0 52px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+button.btn.nudge{animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{0%,70%,100%{transform:none}80%{transform:translateX(6px)}90%{transform:translateX(-2px)}}
+button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+button:disabled{opacity:.4;cursor:default}
+#confetti{position:absolute;inset:0;pointer-events:none;z-index:5;width:100%;height:100%}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <header>
+    <div class="logo">JJA <b>Academy</b></div>
+    <div class="prog" id="prog"><i></i><i></i><i></i></div>
+    <div class="time">5 min</div>
+  </header>
+
+  <div class="track" id="track">
+    <!-- PAGE 1 -->
+    <section class="page" id="p1">
+      <span class="blob b1"></span><span class="blob b2"></span>
+      <div class="kick r">Mettre l'offre en valeur · 1/3</div>
+      <h1 class="r" style="--d:.08s">Un rayon qui donne envie, ça se construit</h1>
+      <p class="sm r" style="--d:.16s">Regardez le rayon se monter, puis touchez les 5 points pour comprendre chaque zone.</p>
+      <div class="fig r" style="--d:.2s" id="fig1"><svg viewBox="0 0 320 270" id="good" role="img" aria-label="Rayon déco bien organisé"></svg></div>
+      <div class="info r" style="--d:.3s" id="info"><b>Touchez un point orange</b>Chaque zone du rayon a un rôle précis dans la vente.</div>
+      <h2 class="r" style="--d:.4s">Les 5 réflexes du rayon déco</h2>
+      <div class="rules" id="rules"></div>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section class="page" id="p2">
+      <span class="blob b1"></span><span class="blob b2"></span>
+      <div class="kick r">Mettre l'offre en valeur · 2/3</div>
+      <h1 class="r" style="--d:.08s">Chasse aux erreurs</h1>
+      <p class="sm r" style="--d:.16s">Ce rayon fait fuir les clients. Trouvez les 5 erreurs en 60 secondes.</p>
+      <div class="hud r" style="--d:.22s">
+        <div class="ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="23" fill="none" stroke="var(--line)" stroke-width="6"/><circle id="arc" cx="27" cy="27" r="23" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="0"/></svg><b id="sec">60</b></div>
+        <div class="found"><span id="cnt">0 / 5 erreurs trouvées</span><div class="bar"><i id="bar"></i></div></div>
+      </div>
+      <div class="fig hunt r" style="--d:.28s" id="fig2">
+        <svg viewBox="0 0 320 270" id="bad" role="img" aria-label="Rayon déco avec erreurs"></svg>
+        <div class="start" id="start"><button class="btn" id="go" style="flex:none;padding:0 28px">Lancer le chrono</button></div>
+      </div>
+      <div class="log" id="log"></div>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section class="page" id="p3">
+      <span class="blob b1"></span><span class="blob b2"></span>
+      <div class="kick r">Mettre l'offre en valeur · 3/3</div>
+      <h1 class="r" style="--d:.08s">Quiz éclair</h1>
+      <p class="sm r" style="--d:.16s">3 questions pour décrocher votre badge.</p>
+      <div id="quiz"></div>
+      <div class="badge" id="badge">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="54" fill="#ff6b4a"/>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 6"/>
+          <path d="M38 62l15 15 30-34" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b id="btitle">Pro du rayon déco</b>
+        <span id="bscore"></span>
+      </div>
+      <p class="note">Micro-formation de démonstration, à valider avec les équipes JJA avant diffusion.</p>
+    </section>
+  </div>
+
+  <div class="next">
+    <button class="btn ghost" id="prev" aria-label="Écran précédent">←</button>
+    <button class="btn nudge" id="nxt">Suivant →</button>
+  </div>
+  <canvas id="confetti"></canvas>
+</div>
+
+<script>
+{
+/* ---------- drawing helpers ---------- */
+const g=(d,s)=>`<g class="it" style="--d:${d}s">${s}</g>`;
+const vase=(x,yb,w,h,c)=>`<path d="M${x+w*.35} ${yb-h}h${w*.3}v${h*.15}q${w*.35} ${h*.15} ${w*.35} ${h*.5}q0 ${h*.35}-${w*.35} ${h*.35}h-${w*.3}q-${w*.35} 0-${w*.35}-${h*.35}q0-${h*.35} ${w*.35}-${h*.5}z" fill="${c}"/><path d="M${x+w*.22} ${yb-h*.5}q0-${h*.2} ${w*.15}-${h*.3}" stroke="#fff" stroke-opacity=".5" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+const candle=(x,yb,h,c)=>`<rect x="${x}" y="${yb-h}" width="14" height="${h}" rx="3" fill="${c}"/><rect x="${x+6}" y="${yb-h-4}" width="2" height="4" fill="#2b1d2e"/><ellipse class="flame" cx="${x+7}" cy="${yb-h-9}" rx="3.5" ry="6" fill="#ffb238"/>`;
+const frame=(x,yb,w,h,c)=>`<rect x="${x}" y="${yb-h}" width="${w}" height="${h}" rx="2" fill="${c}"/><rect x="${x+5}" y="${yb-h+5}" width="${w-10}" height="${h-10}" fill="#fdf3e7"/><path d="M${x+7} ${yb-7}l${w*.3}-${h*.35}l${w*.2} ${h*.2}l${w*.15}-${h*.12}l${w*.2} ${h*.27}z" fill="${c}" opacity=".7"/>`;
+const cush=(x,yb,w,h,c)=>`<rect x="${x}" y="${yb-h}" width="${w}" height="${h}" rx="${h*.38}" fill="${c}"/><path d="M${x+w*.5} ${yb-h+5}v${h-10}" stroke="#000" stroke-opacity=".12" stroke-width="2"/>`;
+const basket=(x,yb,w,h,c)=>`<path d="M${x} ${yb-h}h${w}l-${w*.1} ${h}h-${w*.8}z" fill="${c}"/>${[.25,.5,.75].map(f=>`<path d="M${x+w*.05} ${yb-h+h*f}h${w*.9}" stroke="#000" stroke-opacity=".14" stroke-width="3"/>`).join('')}`;
+const pot=(x,yb,w,h,c)=>`<path d="M${x+w*.15} ${yb-h*.45}h${w*.7}l-${w*.1} ${h*.45}h-${w*.5}z" fill="${c}"/><path d="M${x+w*.5} ${yb-h*.45}q-${w*.5}-${h*.3}-${w*.3}-${h*.55}q${w*.2} ${h*.2} ${w*.3} ${h*.55}q0-${h*.45} ${w*.3}-${h*.55}q${w*.1} ${h*.35}-${w*.3} ${h*.55}z" fill="#5e9a48"/>`;
+const box=(x,yb,w,h)=>`<rect x="${x}" y="${yb-h}" width="${w}" height="${h}" fill="#b98a55"/><path d="M${x} ${yb-h+6}h${w}" stroke="#8a6234" stroke-width="3"/><path d="M${x+w*.2} ${yb-h*.6}l${w*.25} ${h*.35}M${x+w*.45} ${yb-h*.6}l-${w*.25} ${h*.35}" stroke="#8a6234" stroke-width="2"/><path d="M${x+w*.6} ${yb-h-6}l${w*.25} 8l-${w*.2} 4z" fill="#d7b07a"/>`;
+const tag=(x,y,d)=>g(d,`<rect x="${x}" y="${y}" width="26" height="12" rx="2" fill="#fff" stroke="#2b1d2e" stroke-width="1"/><rect x="${x+4}" y="${y+4}" width="12" height="3" fill="#ff6b4a"/>`);
+const star=(x,y)=>`<circle cx="${x}" cy="${y}" r="11" fill="#ff6b4a"/><text x="${x}" y="${y+3.5}" text-anchor="middle" font-family="Outfit" font-weight="800" font-size="8" fill="#fff">NEW</text>`;
+const shelf=(label)=>`<rect x="18" y="34" width="284" height="214" rx="4" fill="var(--back)"/>
+<rect x="12" y="34" width="8" height="230" fill="var(--woodd)"/><rect x="300" y="34" width="8" height="230" fill="var(--woodd)"/>
+${[100,172,244].map(y=>`<rect x="12" y="${y}" width="296" height="9" fill="var(--wood)"/><rect x="12" y="${y+9}" width="296" height="3" fill="var(--woodd)"/>`).join('')}
+${label?`<g class="sign"><path d="M120 34l20-24M200 34l-20-24" stroke="var(--ink)" stroke-width="1.5"/><rect x="104" y="2" width="112" height="24" rx="12" fill="#2b1d2e"/><text x="160" y="18.5" text-anchor="middle" font-family="Outfit" font-weight="700" font-size="12" fill="#fff">${label}</text></g>`:''}`;
+
+/* ---------- page 1: good shelf ---------- */
+const T=['#e8674f','#d9825b','#c4583f','#f0a184'];
+document.getElementById('good').innerHTML=shelf('Univers bohème')+
+ g(0,vase(34,100,34,52,T[2]))+g(.1,candle(76,100,22,T[3])+candle(94,100,30,T[0]))+g(.2,vase(128,100,44,62,T[0]))+g(.3,frame(184,100,44,52,T[1]))+g(.4,vase(240,100,30,40,T[3])+candle(274,100,18,T[2]))+
+ g(.5,cush(30,172,56,40,'#e9d3b4')+cush(62,172,52,34,'#d8b48a'))+g(.6,cush(124,172,62,44,'#c99a6b')+cush(160,172,52,32,'#e9d3b4'))+g(.7,pot(226,172,36,58,'#d8b48a')+pot(262,172,32,46,'#e9d3b4'))+
+ g(.8,basket(30,244,80,50,'#b88a5a'))+g(.9,basket(122,244,70,44,'#a8794d'))+g(1,vase(214,244,52,62,'#8f5c3a'))+
+ [34,94,140,196,248].map((x,i)=>tag(x,110,1.1+i*.05)).join('')+[44,140,236].map((x,i)=>tag(x,182,1.3+i*.05)).join('');
+const HS=[
+ {x:50,y:4.5,t:'Un univers, une histoire',d:'Le panneau nomme l\'ambiance (bohème, naturel, rétro…). Le client se projette chez lui au lieu de voir des objets isolés.'},
+ {x:86,y:24,t:'Hauteur des yeux : la zone qui vend',d:'Entre 1,20 m et 1,60 m environ : produits phares, nouveautés, coups de cœur. Ce qui se voit se vend.'},
+ {x:13,y:52,t:'Hauteur des mains : on complète',d:'Les produits faciles à prendre et à associer : coussins, petits pots, bougies. Idéal pour l\'achat d\'impulsion.'},
+ {x:86,y:80,t:'Niveau du sol : volume et stock',d:'Grands paniers, vases XXL, produits lourds. Le client les repère de loin, le réassort se fait facilement.'},
+ {x:33,y:43,t:'Une étiquette, une vente',d:'Chaque produit a son prix visible et lisible. Un client qui doit demander le prix achète souvent… ailleurs.'}
+];
+const fig1=document.getElementById('fig1'),info=document.getElementById('info'),seen1=new Set();
+fig1.insertAdjacentHTML('beforeend',HS.map((h,i)=>`<button class="hs" style="left:${h.x}%;top:${h.y}%" data-i="${i}" aria-label="${h.t}"><span>${i+1}</span></button>`).join(''));
+fig1.addEventListener('click',e=>{const b=e.target.closest('.hs');if(!b)return;const h=HS[b.dataset.i];b.classList.add('seen');seen1.add(b.dataset.i);
+ info.innerHTML=`<b>${h.t}</b>${h.d}`;info.classList.remove('pop');void info.offsetWidth;info.classList.add('pop');
+ if(seen1.size===HS.length){burst(60);info.innerHTML+=`<br><br><b>Bravo, rayon décodé !</b>Passez à l'étape 2.`}prog()});
+const R=[['Raconter un univers','#e8674f'],['Couleurs en blocs','#d39a1f'],['Pyramide : haut au centre','#1d8aa3'],['Rayon toujours plein','#4e8a3a'],['Prix visibles','#2b1d2e']];
+document.getElementById('rules').innerHTML=R.map((r,i)=>`<span class="r" style="--d:${.5+i*.08}s;--c:${r[1]}"><i></i>${r[0]}</span>`).join('');
+
+/* ---------- page 2: bad shelf ---------- */
+document.getElementById('bad').innerHTML=shelf('')+
+ g(0,vase(30,100,30,46,'#1d8aa3'))+g(.05,candle(74,100,26,'#d39a1f'))+g(.1,frame(98,100,30,40,'#4e8a3a'))+g(.15,frame(232,100,40,50,'#e8674f'))+g(.2,candle(280,100,18,'#9c6ad1'))+
+ g(.25,cush(26,172,44,40,'#e8674f')+cush(58,172,40,30,'#1d8aa3')+cush(90,172,46,38,'#d39a1f')+cush(118,172,36,26,'#9c6ad1'))+g(.3,box(170,172,56,46))+g(.35,pot(244,172,40,56,'#c99a6b'))+
+ g(.4,basket(28,244,74,46,'#b88a5a'))+g(.45,vase(196,244,48,66,'#c4583f')+star(236,190))+
+ [30,70,100,236,272].map((x,i)=>tag(x,110,.5+i*.04)).join('')+[34,90,184].map((x,i)=>tag(x,182,.6+i*.04)).join('')+[40,206].map((x,i)=>tag(x,254,.7+i*.04)).join('');
+const E=[
+ {x:56,y:26,t:'Trou dans le rayon',d:'Un vide = une vente perdue. Réassortez, ou avancez les produits pour garder un rayon plein.'},
+ {x:27,y:53,t:'Couleurs en vrac',d:'Regroupez par blocs de couleur ou par univers : l\'œil lit le rayon en une seconde.'},
+ {x:61,y:54,t:'Carton laissé en rayon',d:'Déballez tout. Un carton casse l\'ambiance et donne une image d\'entrepôt.'},
+ {x:82,y:56,t:'Pas d\'étiquette prix',d:'Ce pot n\'a pas de prix. Chaque produit doit avoir le sien, visible.'},
+ {x:69,y:79,t:'Nouveauté posée au sol',d:'Le produit phare doit monter à hauteur des yeux. Au sol, personne ne le voit.'}
+];
+const fig2=document.getElementById('fig2'),log=document.getElementById('log'),startEl=document.getElementById('start');
+fig2.insertAdjacentHTML('beforeend',E.map((h,i)=>`<button class="err" style="left:${h.x}%;top:${h.y}%" data-i="${i}" aria-label="Zone suspecte ${i+1}"></button>`).join(''));
+let got=0,running=false,over=false,left=60,timer=null;
+const arc=document.getElementById('arc'),sec=document.getElementById('sec'),cnt=document.getElementById('cnt'),bar=document.getElementById('bar');
+document.getElementById('go').onclick=()=>{startEl.hidden=true;running=true;timer=setInterval(()=>{left--;sec.textContent=left;arc.style.strokeDashoffset=144.5*(1-left/60);if(left<=10)arc.style.stroke='var(--ko)';if(left<=0)end(false)},1000)};
+fig2.addEventListener('click',e=>{
+ if(!running)return;const b=e.target.closest('.err');
+ if(b){if(b.classList.contains('got'))return;got++;b.classList.add('got');b.dataset.n=got;const h=E[b.dataset.i];
+  log.insertAdjacentHTML('afterbegin',`<div><b>${got}. ${h.t}</b>${h.d}</div>`);
+  cnt.textContent=`${got} / 5 erreurs trouvées`;bar.style.width=got*20+'%';burst(18,e.clientX,e.clientY);prog();
+  if(got===5)end(true);return}
+ const r=fig2.getBoundingClientRect(),m=document.createElement('span');m.className='mark';m.style.left=(e.clientX-r.left)+'px';m.style.top=(e.clientY-r.top)+'px';fig2.appendChild(m);setTimeout(()=>m.remove(),700);
+ fig2.classList.remove('shake');void fig2.offsetWidth;fig2.classList.add('shake');
+});
+function end(win){clearInterval(timer);running=false;over=true;
+ if(win){log.insertAdjacentHTML('afterbegin',`<div><b>Rayon sauvé en ${60-left} s !</b>Vous avez l'œil d'un pro. Direction le quiz.</div>`);burst(120)}
+ else{fig2.querySelectorAll('.err:not(.got)').forEach(b=>{b.classList.add('miss');const h=E[b.dataset.i];log.insertAdjacentHTML('beforeend',`<div class="ko"><b>À repérer : ${h.t}</b>${h.d}</div>`)});
+  log.insertAdjacentHTML('afterbegin',`<div class="ko"><b>Temps écoulé : ${got}/5</b>Les erreurs manquées sont entourées en rouge.</div>`)}
+ prog()}
+
+/* ---------- page 3: quiz ---------- */
+const Q=[
+ {q:'Où placer une nouveauté Atmosphera que vous voulez mettre en avant ?',o:['Au sol, près du stock','À hauteur des yeux','En réserve jusqu\'au réassort'],a:1,x:'La hauteur des yeux est la zone la plus vue : c\'est là que se jouent les ventes.'},
+ {q:'Vous montez une table de fête. Quelle mise en scène fait vendre le plus ?',o:['Vaisselle Secret de Gourmet seule, en piles','Une table dressée : vaisselle Secret de Gourmet + bougies et déco Atmosphera','Les produits rangés par référence'],a:1,x:'Une scène complète, multi-marques, montre l\'usage et pousse le panier moyen.'},
+ {q:'Un trou apparaît en milieu de rayon en fin de journée. Vous…',o:['Attendez la prochaine livraison','Avancez les produits et réassortez dès que possible','Mettez un carton pour combler'],a:1,x:'Un rayon toujours plein rassure le client et protège la vente.'}
+];
+const quiz=document.getElementById('quiz');let answered=0,score=0;
+quiz.innerHTML=Q.map((q,i)=>`<div class="q r" style="--d:${.22+i*.1}s" data-i="${i}"><p>${i+1}. ${q.q}</p>${q.o.map((o,j)=>`<button class="opt" data-j="${j}">${o}</button>`).join('')}<p class="ex">${q.x}</p></div>`).join('');
+quiz.addEventListener('click',e=>{
+ const b=e.target.closest('.opt');if(!b)return;const box=b.closest('.q');if(box.classList.contains('done'))return;
+ const q=Q[box.dataset.i],ok=+b.dataset.j===q.a;box.classList.add('done');b.classList.add(ok?'good':'bad');
+ if(!ok)box.querySelector(`[data-j="${q.a}"]`).classList.add('good');else burst(22,e.clientX,e.clientY);
+ answered++;if(ok)score++;
+ if(answered===Q.length){const bd=document.getElementById('badge');
+  document.getElementById('btitle').textContent=score>=2?'Pro du rayon déco':'Presque pro du rayon';
+  document.getElementById('bscore').textContent=`Quiz ${score}/3 · Chasse aux erreurs ${got}/5`;
+  bd.classList.add('on');setTimeout(()=>bd.scrollIntoView({behavior:'smooth',block:'nearest'}),150);if(score>=2)burst(160)}
+ prog()});
+
+/* ---------- confetti ---------- */
+const cv=document.getElementById('confetti'),cx=cv.getContext('2d'),phone=document.querySelector('.phone');let parts=[],raf=0;
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function burst(n,x,y){if(reduce)return;const r=phone.getBoundingClientRect();cv.width=r.width;cv.height=r.height;
+ const ox=x?x-r.left:r.width/2,oy=y?y-r.top:r.height*.4,cols=['#ff6b4a','#1d8aa3','#d39a1f','#4e8a3a','#f0a184'];
+ for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=2+Math.random()*(n>50?9:5);parts.push({x:ox,y:oy,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(n>50?5:2),r:Math.random()*6,w:4+Math.random()*5,c:cols[i%5],l:60+Math.random()*40})}
+ if(!raf)tick()}
+function tick(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.l-->0);
+ for(const p of parts){p.vy+=.25;p.vx*=.98;p.x+=p.vx;p.y+=p.vy;p.r+=.2;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.globalAlpha=Math.min(1,p.l/30);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);cx.restore()}
+ raf=parts.length?requestAnimationFrame(tick):0}
+
+/* ---------- navigation ---------- */
+const track=document.getElementById('track'),pages=[...track.children],bars=[...document.querySelectorAll('#prog i')];
+const prev=document.getElementById('prev'),nxt=document.getElementById('nxt');let cur=-1;
+function go(i){i=Math.max(0,Math.min(2,i));track.scrollTo({left:i*track.clientWidth,behavior:reduce?'auto':'smooth'})}
+function prog(){const v=[seen1.size/HS.length,over?1:got/5,answered/Q.length];bars.forEach((b,i)=>b.style.setProperty('--w',Math.round(v[i]*100)+'%'))}
+function activate(i){if(i===cur)return;cur=i;pages.forEach((p,j)=>{if(j===i){p.classList.remove('live');void p.offsetWidth;p.classList.add('live');p.scrollTop=0}});
+ prev.disabled=cur===0;nxt.textContent=cur===2?'Recommencer':'Suivant →'}
+track.addEventListener('scroll',()=>activate(Math.round(track.scrollLeft/track.clientWidth)),{passive:true});
+prev.onclick=()=>go(cur-1);
+nxt.onclick=()=>{if(cur===2){location.reload();return}go(cur+1)};
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+activate(0);prog();
+}
+</script>
+</body>
+</html>
